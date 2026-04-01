@@ -1,0 +1,64 @@
+# ================================================
+# MCP Stack - Unified Gateway (OrbStack Optimized)
+# ================================================
+
+services:
+  # Context7 MCP Server (HTTP)
+  context7:
+    image: acuvity/mcp-server-context-7:latest
+    restart: unless-stopped
+    environment:
+      - PORT=${INTERNAL_PORT}
+    read_only: true
+    tmpfs:
+      - /tmp:rw,size=256m,noexec
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    networks:
+      - mcp_net
+
+  # SearXNG MCP Server (HTTP)
+  searxng:
+    image: isokoliuk/mcp-searxng:latest
+    restart: unless-stopped
+    environment:
+      - SEARXNG_URL=${SEARXNG_URL}
+      - TZ=Europe/Berlin
+      - MCP_HTTP_PORT=${INTERNAL_PORT}
+    read_only: true
+    tmpfs:
+      - /tmp:rw,size=128m,noexec
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    networks:
+      - mcp_net
+
+  # Unified MCP Gateway
+  gateway:
+    image: docker/mcp-gateway:latest
+    ports:
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
+    environment:
+      - DOCKER_MCP_IN_CONTAINER=1
+    command:
+      - --transport=streamable-http
+      - --port=${GATEWAY_PORT}
+      - --static
+      - --servers=context7=http://context7:${INTERNAL_PORT}/mcp
+      - --servers=searxng=http://searxng:${INTERNAL_PORT}/mcp
+    depends_on:
+      - context7
+      - searxng
+    restart: unless-stopped
+    networks:
+      - mcp_net
+
+networks:
+  mcp_net:
+    driver: bridge
