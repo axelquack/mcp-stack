@@ -1,5 +1,5 @@
 # ================================================
-# MCP Stack - Unified Gateway (OrbStack Optimized)
+# MCP Stack - Unified Proxy (Streamable HTTP)
 # ================================================
 
 services:
@@ -7,8 +7,11 @@ services:
   context7:
     image: acuvity/mcp-server-context-7:latest
     restart: unless-stopped
+    ports:
+      - "${CONTEXT7_EXT_PORT}:${INTERNAL_PORT}"
     environment:
       - PORT=${INTERNAL_PORT}
+      - CONTEXT7_API_KEY=${CONTEXT7_API_KEY}
     read_only: true
     tmpfs:
       - /tmp:rw,size=256m,noexec
@@ -17,6 +20,11 @@ services:
     security_opt:
       - no-new-privileges:true
     mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${CONTEXT7_HEALTH_PORT}/"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - mcp_net
 
@@ -24,6 +32,8 @@ services:
   searxng:
     image: isokoliuk/mcp-searxng:latest
     restart: unless-stopped
+    ports:
+      - "${SEARXNG_EXT_PORT}:${INTERNAL_PORT}"
     environment:
       - SEARXNG_URL=${SEARXNG_URL}
       - TZ=Europe/Berlin
@@ -36,25 +46,26 @@ services:
     security_opt:
       - no-new-privileges:true
     mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${INTERNAL_PORT}/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - mcp_net
 
-  # Unified MCP Gateway
-  gateway:
-    image: docker/mcp-gateway:latest
+  # Unified Proxy (Nginx)
+  proxy:
+    image: nginx:alpine
     ports:
-      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
-    environment:
-      - DOCKER_MCP_IN_CONTAINER=1
-    command:
-      - --transport=streamable-http
-      - --port=${GATEWAY_PORT}
-      - --static
-      - --servers=context7=http://context7:${INTERNAL_PORT}/mcp
-      - --servers=searxng=http://searxng:${INTERNAL_PORT}/mcp
+      - "${BIND_ADDRESS}:${GATEWAY_PORT}:${PROXY_INTERNAL_PORT}"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - context7
-      - searxng
+      context7:
+        condition: service_healthy
+      searxng:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - mcp_net
