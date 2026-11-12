@@ -1,5 +1,7 @@
 # Unified MCP Stack (OrbStack Optimized)
 
+Status (2026-11-12, Europe/Berlin): `CHANGELOG.md` is newest-first. A pane ID was removed from the Herdr agent line and from the changelog.
+
 This project provides a fully containerized, secure, and unified Model Context Protocol (MCP) stack using **Nginx as a high-performance proxy**. It is specifically optimized to run on **macOS Apple Silicon** using **OrbStack**, avoiding common issues with Docker socket dependencies.
 
 ## Architecture

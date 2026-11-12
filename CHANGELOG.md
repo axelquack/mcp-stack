@@ -1,77 +1,68 @@
-# CHANGELOG: MCP Stack Evolution
+# Changelog
 
-This document tracks the architectural decisions and attempts made to create a stable, secure, and unified MCP stack on macOS (OrbStack).
+This file is published with a public repository.
 
+It must never contain IP addresses, hostnames, MAC addresses, internal paths, usernames, email addresses, vault IDs, credentials, or pane IDs.
 
-## 2026-11-12
+Detailed private notes may go into `CHANGELOG.private.md`. That file is gitignored in a public repository. Do not commit it.
 
-- Added a Role section and recorded the Herdr agent Liv (Gateway) · MCP nginx proxy stack (pane wT:p1) in AGENTS.md.
+Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
+Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
-## 1. Initial Research
+## 2026-11-12 — Sanitize the public changelog
 
-Before finalizing this stack, several community variants were tested and identified as unstable or incompatible with a hardened container environment:
+### Changed
 
-### Context7 Variants Tested
+- Rebuilt this file in the public changelog layout, newest first.
+- Removed a pane ID from the Herdr agent line in `AGENTS.md` and from this file.
+- Noted that change in `README.md`.
 
-*   `mcp/context7:latest`: Failed due to entrypoint issues.
-*   `mekayelanik/context7-mcp:latest`: Failed with permission errors (`su-exec`).
-*   **Winner**: `acuvity/mcp-server-context-7:latest` (Official, stable HTTP support).
+**Why:** This repository is public. A pane ID does not belong in it.
 
-### SearXNG Variants Tested
+## 2026-11-12 — Record the Herdr agent
 
-*   `overtlids/mcp-searxng-enhanced`: Failed on read-only filesystems.
-*   `ghcr.io/mcp-ecosystem/mcp-searxng`: Access denied (Private).
-*   **Winner**: `isokoliuk/mcp-searxng:latest` (Unique HTTP transport mode).
+### Added
 
----
+- A Role section in `AGENTS.md`.
+- The Herdr agent line: Liv (Gateway) · MCP nginx proxy stack.
 
-## 2. Technical Journey
+**Why:** Name the agent that owns this proxy stack.
 
-### Attempt 1: Official Docker MCP Gateway (Static Mode)
+## 2026-04-03 — Nginx proxy replaces the Docker MCP Gateway
 
-*   **Method**: `docker/mcp-gateway` with `--static` and `--servers=name=url`.
-*   **Result**: **Failed.**
-*   **Issue**: The gateway reported "0 tools listed" in microseconds. It failed to perform the necessary SSE handshake with the sub-servers, leading to session errors in SearXNG.
+### Added
 
-### Attempt 2: Docker MCP Gateway (Managed Mode)
+- `nginx.conf.template`, with path routing for Context7 and SearXNG and streamable HTTP (buffering off, long read timeout).
+- This changelog, as a record of the gateway attempts.
 
-*   **Method**: Mounting `/var/run/docker.sock` to let the Gateway manage containers.
-*   **Result**: **Abandoned by user request.**
-*   **Issue**: While this is the "intended" way for the gateway to work, the user explicitly requested a more secure setup that **avoids the Docker socket**.
+### Changed
 
-### Attempt 3: Docker MCP Gateway (Catalog-based)
+- Client entry is the Nginx proxy. Paths are `/context7/mcp` and `/searxng/mcp` on the gateway port from the environment.
+- README was tightened.
+- Context7 image is `acuvity/mcp-server-context-7`. An earlier Context7 image failed on its entrypoint. Another failed on a read-only filesystem permission error (`su-exec`).
+- SearXNG image is `isokoliuk/mcp-searxng`, which speaks HTTP. One SearXNG image failed on a read-only filesystem. Another image was not accessible because its registry listing was private.
 
-*   **Method**: Using `--catalog` with various formats (List vs Object).
-*   **Result**: **Failed.**
-*   **Issue**: The gateway consistently reported "No server enabled." The discovery logic in the Go-based gateway proved inconsistent when proxying to existing HTTP containers.
+### Removed
 
-### Attempt 4: Unified Nginx Proxy (Current Stable Version) ✅
+- `catalog.yaml` and the Docker MCP Gateway.
+- Static gateway mode: it reported no tools and did not complete the SSE handshake.
+- Managed gateway mode: it needed the Docker socket, which was rejected.
+- Catalog gateway mode: it reported that no server was enabled.
 
-*   **Method**: A lightweight Nginx Alpine container acting as a reverse proxy.
-*   **Result**: **Successful.**
-*   **Why it works**: 
-    *   Correctly handles **Streamable HTTP (SSE)** headers (`proxy_buffering off`, etc.).
-    *   Provides stable, named endpoints (`/context7/mcp` and `/searxng/mcp`).
-    *   Zero dependency on the Docker socket.
-    *   Compatible with Zed's modern MCP implementation.
+### Security
 
----
+- The proxy does not mount the Docker socket.
+- The MCP containers use a read-only root, dropped capabilities, and no privilege escalation.
 
-## Final Architecture Summary
+**Why:** The gateway could not proxy the existing HTTP servers reliably, and a Docker socket mount was out of scope. Nginx makes the routes explicit.
 
-*   **Transport**: Streamable HTTP (via Nginx proxy).
-*   **Endpoints**:
-    *   `http://localhost:${GATEWAY_PORT}/context7/mcp`
-    *   `http://localhost:${GATEWAY_PORT}/searxng/mcp`
-*   **Security**: No `docker.sock`, `read_only` filesystems, and non-privileged containers.
-*   **Stability**: Verified healthy in OrbStack and connected in Zed.
+## 2026-04-01 — Initial stack
 
-## Why `catalog.yaml` is no longer needed
+### Added
 
-The `catalog.yaml` file was a specific configuration requirement for the **Docker MCP Gateway** (`docker/mcp-gateway`). Its purpose was to tell that specific Go-based tool which servers to spin up or proxy. 
+- `docker-compose.yml` for the Context7 and SearXNG MCP servers.
+- `catalog.yaml` for the Docker MCP Gateway (removed on 2026-04-03).
+- README and the Apache-2.0 `LICENSE`.
 
-Since we have moved to a **Standard Nginx Proxy** architecture:
-1.  **Direct Definition**: Servers are now defined directly in the standard `docker-compose.yml`.
-2.  **Explicit Routing**: The routing logic is handled by `nginx.conf`.
-3.  **Transparency**: We no longer have a "black box" (the gateway) trying to parse a proprietary YAML format. This makes the stack more reliable and easier to debug.
+**Why:** First containerized MCP stack for a local container runtime.

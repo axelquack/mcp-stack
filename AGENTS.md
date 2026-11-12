@@ -6,7 +6,7 @@
 - **This agent owns:** `docker-compose.yml`, `nginx.conf.template`, and the docs for running this proxy stack.
 - **Out of scope / handoff:** Unclear whether this agent also maintains sibling repos `mcp-mate` or `open-code` (the herdr `~mcp-stack` space lists them; this tree does not). The SearXNG backend is an Olares instance configured in `.env`, not in this repo. Do not commit `.env` or expose internal ports.
 
-Herdr agent: Liv (Gateway) · MCP nginx proxy stack (pane wT:p1)
+Herdr agent: Liv (Gateway) · MCP nginx proxy stack
 
 ## Documentation, commit & push
 
