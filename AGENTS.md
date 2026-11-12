@@ -48,7 +48,7 @@ Read in this order:
 | `SECURITY.md` | Threat model, where secrets live, and leak response | The owning agent, when the threat model changes |
 | `LICENSE` | Rights granted for this repo | Axel |
 | `justfile` | Repeatable recipes, including the secret check | Whoever adds a recipe |
-| `docker-stack.just` | Operator recipes imported by `justfile`. Run only when Axel asks | Whoever adds an operator recipe |
+| `just/docker-stack.just` | Operator recipes imported by `justfile`. Run only when Axel asks | Whoever adds an operator recipe |
 | `docs/` | Longer docs. The index is `docs/README.md` | Whoever writes the doc |
 | `docs/README.md` | Index of every docs page | Whoever adds or removes a docs page |
 | `docs/proxy.md` | What the Nginx proxy service does | Whoever changes the proxy |

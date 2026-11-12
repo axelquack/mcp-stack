@@ -1,6 +1,6 @@
 # Docs
 
-Docker stack. One page per service. Compose files stay at the repository root. The just recipes `up`, `down`, `restart`, `logs`, `ps`, `pull`, and `config` are the operator interface. Run them only when Axel asks.
+Docker stack. One page per service. Compose files stay at the repository root. The just recipes `up`, `down`, `restart`, `logs`, `ps`, `pull`, and `config` live in `just/docker-stack.just`. They are the operator interface. Run them only when Axel asks.
 
 The license is PolyForm Noncommercial 1.0.0 (`LICENSE`). Versions published before the 2026-11-12 license change remain available under Apache-2.0. What changed, and why, is in `CHANGELOG.md`.
 
