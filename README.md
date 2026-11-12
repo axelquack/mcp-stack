@@ -1,64 +1,64 @@
-# Unified MCP Stack (OrbStack Optimized)
+# mcp-stack
 
-Status (2026-11-12, Europe/Berlin): `CHANGELOG.md` is newest-first. A pane ID was removed from the Herdr agent line and from the changelog.
+Nginx reverse proxy in front of a Context7 MCP server and a SearXNG MCP server, for a local container runtime. The containers do not mount the Docker socket.
 
-This project provides a fully containerized, secure, and unified Model Context Protocol (MCP) stack using **Nginx as a high-performance proxy**. It is specifically optimized to run on **macOS Apple Silicon** using **OrbStack**, avoiding common issues with Docker socket dependencies.
+## Status
 
-## Architecture
+2026-11-12, Europe/Berlin: public repository on the repo standard. The license is PolyForm Noncommercial 1.0.0. Versions published before this commit remain available under Apache-2.0.
 
-The stack consists of three primary services running in isolated Docker containers:
+## Start here
 
-1.  **Unified Nginx Proxy**: Acts as a central gateway. It routes traffic based on the URL path.
-2.  **Context7 MCP Server**: Provides documentation and code context.
-3.  **SearXNG MCP Server**: Provides web search capabilities.
+1. `AGENTS.md`
+2. This file
+3. `BUGFIXES.md` and `SECURITY.md`
+4. `HANDOFF.md`, the last three entries in `CHANGELOG.md`, and `git log -5`. `HANDOFF.md` is gitignored in this public repository.
+5. The current ticket, or else `TODO.md` and `ROADMAP.md`
+6. `docs/README.md`
 
-## Key Features
+## Layout
 
-*   **Zero Port Exposure**: All port numbers are abstracted into the `.env` file for maximum security and flexibility.
-*   **Dynamic Configuration**: Uses `nginx.conf.template` to automatically inject environment variables at startup.
-*   **Zero Docker Socket Dependency**: The proxy does not require `/var/run/docker.sock`, significantly improving security.
-*   **Unified Access**: Both MCP servers are aggregated behind a single entry point.
-*   **Hardened Security**:
-    *   Containers run with `read_only: true` filesystems.
-    *   Capabilities are dropped (`cap_drop: ALL`).
-    *   No privilege escalation allowed (`no-new-privileges: true`).
-    *   Internal servers are not exposed to the host/internet; only the Proxy is reachable.
+| Path | What |
+| --- | --- |
+| `AGENTS.md` | Agent rules. `CLAUDE.md` is a symlink to this file. |
+| `README.md` | This page. |
+| `CHANGELOG.md` | What changed, newest first. |
+| `ROADMAP.md` | Now, next, later, ideas, done recently. |
+| `TODO.md` | Interim tasks until the agent-ops board exists. |
+| `BUGFIXES.md` | Durable bug writeups (`BF-NNN`). |
+| `HANDOFF.md` | Done, next, open questions. Tracked in a private repo. Gitignored in a public repo. |
+| `SECURITY.md` | Threat model and where secrets live. |
+| `LICENSE` | Rights for this repo. |
+| `justfile` | Recipes. `just` lists them. `just setup` installs the git hook. |
+| `docker-stack.just` | Operator recipes. Run them only when asked. |
+| `docs/` | Longer docs. Index: `docs/README.md`. |
+| `.env.example` | Setting names only. |
+| `.githooks/` | `pre-commit` runs the secret check. |
+| `scripts/check-secrets.sh` | Secret check for the working tree, the index, or history. |
+| `docker-compose.yml` | The three services. Ports and secrets come from the environment. |
+| `nginx.conf.template` | Path routing for the proxy. |
 
-## Getting Started
+## What it runs
 
-### Prerequisites
-*   [OrbStack](https://orbstack.dev/) (or Docker Desktop)
-*   An Olares instance for SearXNG (configured in `.env`)
+Three services on one private bridge network:
 
-### Installation
+1. **Proxy.** Nginx. Client paths are `/context7/mcp` and `/searxng/mcp` on the gateway port. The prefix is stripped before the request reaches the upstream.
+2. **Context7.** Documentation and code context. Image `acuvity/mcp-server-context-7`.
+3. **SearXNG.** Web search through the MCP server image `isokoliuk/mcp-searxng`. The upstream SearXNG base URL is `SEARXNG_URL` in the local env file.
 
-1.  **Start the stack:**
-    ```bash
-    docker-compose up -d
-    ```
+The proxy is the client entry. The compose file also publishes host ports for the Context7 and SearXNG containers. Those port numbers come from the environment.
 
-2.  **Verify the services:**
-    ```bash
-    docker-compose ps
-    ```
+The MCP containers use a read-only root, dropped capabilities, and no privilege escalation. The proxy image does not use that same hardening. **Unverified** in this change: the running containers were not inspected.
 
-## Connecting to Clients
+## Configuration
 
-### Zed
-Zed is already configured to use the following endpoints:
+`.env.example` lists every variable `docker-compose.yml` and `nginx.conf.template` read. Values stay empty there. Copy it to `.env` locally and fill it in. Do not commit `.env`.
 
-*   **Context7**: `http://localhost:${GATEWAY_PORT}/context7/mcp`
-*   **SearXNG**: `http://localhost:${GATEWAY_PORT}/searxng/mcp`
+`just` lists the recipes. `just setup` points this clone at `.githooks`. The operator recipes in `docker-stack.just` (`up`, `down`, `restart`, `logs`, `ps`, `pull`, `config`) run only when Axel asks.
 
-You can verify these settings in your Zed `settings.json` file (`cmd+,`).
+A local container runtime such as OrbStack or Docker Desktop is required. The SearXNG upstream is configured only through `SEARXNG_URL`.
 
-## Configuration Files
+## License
 
-*   **`docker-compose.yml`**: The main orchestration file. Uses environment variables for all network settings.
-*   **`nginx.conf.template`**: The routing template that dynamically configures the proxy.
-*   **`.env`**: **The only place** where secrets, URLs, and port numbers are stored.
+PolyForm Noncommercial 1.0.0. See `LICENSE`.
 
-## Troubleshooting
-
-*   **Port Busy**: If the `${GATEWAY_PORT}` is already in use, simply change it in the `.env` file and restart.
-*   **Configuration Sync**: If you change ports in `.env`, run `docker-compose up -d` to regenerate the proxy configuration.
+Versions published before this commit remain available under Apache-2.0.

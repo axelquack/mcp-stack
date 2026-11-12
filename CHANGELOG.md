@@ -10,6 +10,28 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-12 — Public repo standard
+
+### Added
+
+- The repo-standard file set: `AGENTS.md` skeleton, `CLAUDE.md` symlink, `ROADMAP.md`, `TODO.md`, `BUGFIXES.md`, `SECURITY.md`, `justfile`, `docker-stack.just`, `.githooks/pre-commit`, `scripts/check-secrets.sh`, `scripts/lint.sh`, `scripts/docs-index.sh`, `scripts/repo-audit.sh`, `.gitleaks.toml`, `.github/workflows/gitleaks.yml`, and `.env.example` (names only).
+- `docs/README.md` and one page per service (`docs/proxy.md`, `docs/context7.md`, `docs/searxng.md`).
+- Public gitignore rules so `HANDOFF.md` and `CHANGELOG.private.md` stay untracked.
+
+### Changed
+
+- `LICENSE` is PolyForm Noncommercial 1.0.0. Versions published before this commit remain available under Apache-2.0.
+- `README.md` follows the repo-standard layout and drops the claim that only the proxy is published on the host.
+- `AGENTS.md` follows the skeleton. The Herdr agent line is Liv (Gateway) · MCP nginx proxy stack.
+- Reviewed `docker-compose.yml` and `nginx.conf.template`. Addresses and ports already come from the environment, so those files were left as they are. The container loopback name in the healthchecks is not a private address.
+
+### Security
+
+- `pre-commit` runs `scripts/check-secrets.sh --staged` after `just setup`.
+- GitHub Actions runs gitleaks on push and pull_request.
+
+**Why:** This public repository needs an explicit license, a secret check, and a file map before further edits.
+
 ## 2026-11-12 — Sanitize the public changelog
 
 ### Changed
