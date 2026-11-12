@@ -10,6 +10,14 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-12 — Branch protection on main
+
+### Security
+
+- GitHub branch protection on `main`: every change goes through a pull request (0 approvals required), force-pushes and branch deletion are blocked, and the rule applies to administrators too. The gitleaks workflow runs on each pull request.
+
+Why: public repository, strictest tier of the repo standard. Agents push a branch and open a pull request instead of pushing to `main`.
+
 ## 2026-11-12 — Public repo standard
 
 ### Added
