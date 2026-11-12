@@ -2,6 +2,12 @@
 
 This document tracks the architectural decisions and attempts made to create a stable, secure, and unified MCP stack on macOS (OrbStack).
 
+
+## 2026-11-12
+
+- Added a Role section and recorded the Herdr agent Liv (Gateway) · MCP nginx proxy stack (pane wT:p1) in AGENTS.md.
+
+
 ## 1. Initial Research
 
 Before finalizing this stack, several community variants were tested and identified as unstable or incompatible with a hardened container environment:

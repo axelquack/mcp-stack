@@ -1,3 +1,13 @@
+# Agent conventions — mcp-stack
+
+## Role
+
+- **Project:** Containerized Model Context Protocol stack for macOS/OrbStack: Nginx as a unified proxy in front of a Context7 MCP server and a SearXNG MCP server.
+- **This agent owns:** `docker-compose.yml`, `nginx.conf.template`, and the docs for running this proxy stack.
+- **Out of scope / handoff:** Unclear whether this agent also maintains sibling repos `mcp-mate` or `open-code` (the herdr `~mcp-stack` space lists them; this tree does not). The SearXNG backend is an Olares instance configured in `.env`, not in this repo. Do not commit `.env` or expose internal ports.
+
+Herdr agent: Liv (Gateway) · MCP nginx proxy stack (pane wT:p1)
+
 ## Documentation, commit & push
 
 Standing rule from Axel (2026-11-12), for every Grok bot and herdr agent working in this repo:
