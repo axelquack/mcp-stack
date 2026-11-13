@@ -10,6 +10,17 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-13 — Pin container images by tag and digest
+
+### Changed
+
+- Context7 is `acuvity/mcp-server-context-7:2.1.0@sha256:7d63d51088f7b59046a31bd9056e01bbad51130d8aa3389e56ca52e25cf89d0b`. Tag `2.1.0` is the concrete release whose multi-arch index matches `latest`. Tag `1.0.0-2.1.0` points at the same index.
+- SearXNG is `isokoliuk/mcp-searxng:2.10.1@sha256:39176ff787129814aa7fbc96250e35b01ccc1bb6586d98ad3963551ba53e405d`. Tag `2.10.1` matches `latest`. Tag `2.10` also matches. Tag `2.10.0` does not.
+- Nginx is `nginx:1.31.8-alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11`. Tag `1.31.8-alpine` matches `alpine`.
+- `README.md`, `docs/README.md`, `docs/proxy.md`, `docs/context7.md`, and `docs/searxng.md` name those pins and the bump procedure.
+
+**Why:** A floating tag can move without a commit. Pinning the release tag and the multi-arch index digest keeps the build reproducible. Renovate, Dependabot, or a manual bump updates the tag and the digest together later.
+
 ## 2026-11-12 — Public repo standard
 
 ### Added
