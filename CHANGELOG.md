@@ -26,6 +26,14 @@ Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the s
 
 **Why:** one board for all open work (Axel, 2026-11-13).
 
+## 2026-11-12 — Branch protection on main
+
+### Security
+
+- GitHub branch protection on `main`: every change goes through a pull request (0 approvals required), force-pushes and branch deletion are blocked, and the rule applies to administrators too. The gitleaks workflow runs on each pull request.
+
+Why: public repository, strictest tier of the repo standard. Agents push a branch and open a pull request instead of pushing to `main`.
+
 ## 2026-11-12 — Public repo standard
 
 ### Added
