@@ -1,6 +1,6 @@
 # Docs
 
-Docker stack. One page per service. Compose files stay at the repository root. The just recipes `up`, `down`, `restart`, `logs`, `ps`, `pull`, and `config` are the operator interface. Run them only when Axel asks.
+Docker stack. One page per service. Compose files stay at the repository root. The just recipes `up`, `down`, `restart`, `logs`, `ps`, `pull`, and `config` live in `just/docker-stack.just`. They are the operator interface. Run them only when Axel asks.
 
 Each service page names the pinned image. A bump replaces the release tag and the multi-arch index digest together in `docker-compose.yml`. Renovate, Dependabot, or a manual edit does that.
 

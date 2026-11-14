@@ -45,6 +45,23 @@ Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the s
 
 **Why:** A floating tag can move without a commit. Pinning the release tag and the multi-arch index digest keeps the build reproducible. Renovate, Dependabot, or a manual bump updates the tag and the digest together later.
 
+## 2026-11-12 — Branch protection on main
+
+### Security
+
+- GitHub branch protection on `main`: every change goes through a pull request (0 approvals required), force-pushes and branch deletion are blocked, and the rule applies to administrators too. The gitleaks workflow runs on each pull request.
+
+Why: public repository, strictest tier of the repo standard. Agents push a branch and open a pull request instead of pushing to `main`.
+
+## 2026-11-12 — Move the just snippet into just/
+
+### Changed
+
+- `docker-stack.just` now lives at `just/docker-stack.just`. The root `justfile` imports `just/docker-stack.just`.
+- `AGENTS.md`, `README.md`, and `docs/README.md` name that path.
+
+**Why:** Type snippets belong in `just/`, so the repository root stays limited to the justfile.
+
 ## 2026-11-12 — Public repo standard
 
 ### Added

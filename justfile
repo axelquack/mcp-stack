@@ -1,11 +1,11 @@
 # Repo-standard recipes.
-# Import one type snippet next to it.
+# The type snippet is required and lives at just/docker-stack.just.
 # Do not load a dotenv file. Secrets stay out of the recipe environment.
 
 set dotenv-load := false
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-import 'docker-stack.just'
+import 'just/docker-stack.just'
 
 # List the recipes.
 default:
