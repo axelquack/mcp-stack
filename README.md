@@ -6,6 +6,8 @@ Nginx reverse proxy in front of a Context7 MCP server and a SearXNG MCP server, 
 
 2026-11-12, Europe/Berlin: public repository on the repo standard. The license is PolyForm Noncommercial 1.0.0. Versions published before this commit remain available under Apache-2.0.
 
+2026-11-13: each container image is pinned to a release tag and its multi-arch index digest.
+
 ## Start here
 
 1. `AGENTS.md`
@@ -41,9 +43,11 @@ Nginx reverse proxy in front of a Context7 MCP server and a SearXNG MCP server, 
 
 Three services on one private bridge network:
 
-1. **Proxy.** Nginx. Client paths are `/context7/mcp` and `/searxng/mcp` on the gateway port. The prefix is stripped before the request reaches the upstream.
-2. **Context7.** Documentation and code context. Image `acuvity/mcp-server-context-7`.
-3. **SearXNG.** Web search through the MCP server image `isokoliuk/mcp-searxng`. The upstream SearXNG base URL is `SEARXNG_URL` in the local env file.
+1. **Proxy.** Nginx `nginx:1.31.8-alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72`. Client paths are `/context7/mcp` and `/searxng/mcp` on the gateway port. The prefix is stripped before the request reaches the upstream.
+2. **Context7.** Documentation and code context. Image `acuvity/mcp-server-context-7:2.1.0@sha256:7d63d51088f7b59046a31bd9056e01bbad51130d8aa3389e56ca52e25cf89d0b`.
+3. **SearXNG.** Web search through `isokoliuk/mcp-searxng:2.10.1@sha256:39176ff787129814aa7fbc96250e35b01ccc1bb6586d98ad3963551ba53e405d`. The upstream SearXNG base URL is `SEARXNG_URL` in the local env file.
+
+A bump replaces the tag and the digest together in `docker-compose.yml`. Renovate, Dependabot, or a manual edit does that. The digest is the multi-arch index of that tag.
 
 The proxy is the client entry. The compose file also publishes host ports for the Context7 and SearXNG containers. Those port numbers come from the environment.
 

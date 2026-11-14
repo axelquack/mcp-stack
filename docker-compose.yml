@@ -5,7 +5,7 @@
 services:
   # Context7 MCP Server (HTTP)
   context7:
-    image: acuvity/mcp-server-context-7:latest
+    image: acuvity/mcp-server-context-7:2.1.0@sha256:7d63d51088f7b59046a31bd9056e01bbad51130d8aa3389e56ca52e25cf89d0b
     restart: unless-stopped
     ports:
       - "${CONTEXT7_EXT_PORT}:${INTERNAL_PORT}"
@@ -30,7 +30,7 @@ services:
 
   # SearXNG MCP Server (HTTP)
   searxng:
-    image: isokoliuk/mcp-searxng:latest
+    image: isokoliuk/mcp-searxng:2.10.1@sha256:39176ff787129814aa7fbc96250e35b01ccc1bb6586d98ad3963551ba53e405d
     restart: unless-stopped
     ports:
       - "${SEARXNG_EXT_PORT}:${INTERNAL_PORT}"
@@ -56,7 +56,7 @@ services:
 
   # Unified Proxy (Nginx)
   proxy:
-    image: nginx:alpine
+    image: nginx:1.31.8-alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72
     ports:
       - "${BIND_ADDRESS}:${GATEWAY_PORT}:${PROXY_INTERNAL_PORT}"
     environment:

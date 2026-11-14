@@ -18,6 +18,14 @@ Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the s
 
 **Why:** standing rule from Axel (2026-11-14) for every Grok Bot and Herdr agent.
 
+## 2026-11-14 — Refresh the Nginx image pin
+
+### Changed
+
+- Nginx is now `nginx:1.31.8-alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72`. Tag `1.31.8-alpine` still matches `alpine`. The previous index digest `sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11` no longer matches the registry. Context7 and SearXNG pins were unchanged.
+
+**Why:** A registry check after merging `main` showed that the `1.31.8-alpine` multi-arch index had moved.
+
 ## 2026-11-13 — Work tracking rule
 
 ### Changed
@@ -25,6 +33,17 @@ Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the s
 - AGENTS.md has a Work tracking section: open work goes on the owner's GitHub Project board, not into new TODO.md items.
 
 **Why:** one board for all open work (Axel, 2026-11-13).
+
+## 2026-11-13 — Pin container images by tag and digest
+
+### Changed
+
+- Context7 is `acuvity/mcp-server-context-7:2.1.0@sha256:7d63d51088f7b59046a31bd9056e01bbad51130d8aa3389e56ca52e25cf89d0b`. Tag `2.1.0` is the concrete release whose multi-arch index matches `latest`. Tag `1.0.0-2.1.0` points at the same index.
+- SearXNG is `isokoliuk/mcp-searxng:2.10.1@sha256:39176ff787129814aa7fbc96250e35b01ccc1bb6586d98ad3963551ba53e405d`. Tag `2.10.1` matches `latest`. Tag `2.10` also matches. Tag `2.10.0` does not.
+- Nginx is `nginx:1.31.8-alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11`. Tag `1.31.8-alpine` matches `alpine`.
+- `README.md`, `docs/README.md`, `docs/proxy.md`, `docs/context7.md`, and `docs/searxng.md` name those pins and the bump procedure.
+
+**Why:** A floating tag can move without a commit. Pinning the release tag and the multi-arch index digest keeps the build reproducible. Renovate, Dependabot, or a manual bump updates the tag and the digest together later.
 
 ## 2026-11-12 — Branch protection on main
 
