@@ -29,7 +29,7 @@ Nginx reverse proxy in front of a Context7 MCP server and a SearXNG MCP server, 
 | `SECURITY.md` | Threat model and where secrets live. |
 | `LICENSE` | Rights for this repo. |
 | `justfile` | Recipes. `just` lists them. `just setup` installs the git hook. |
-| `docker-stack.just` | Operator recipes. Run them only when asked. |
+| `just/docker-stack.just` | Operator recipes. Run them only when asked. |
 | `docs/` | Longer docs. Index: `docs/README.md`. |
 | `.env.example` | Setting names only. |
 | `.githooks/` | `pre-commit` runs the secret check. |
@@ -53,7 +53,7 @@ The MCP containers use a read-only root, dropped capabilities, and no privilege 
 
 `.env.example` lists every variable `docker-compose.yml` and `nginx.conf.template` read. Values stay empty there. Copy it to `.env` locally and fill it in. Do not commit `.env`.
 
-`just` lists the recipes. `just setup` points this clone at `.githooks`. The operator recipes in `docker-stack.just` (`up`, `down`, `restart`, `logs`, `ps`, `pull`, `config`) run only when Axel asks.
+`just` lists the recipes. `just setup` points this clone at `.githooks`. The operator recipes in `just/docker-stack.just` (`up`, `down`, `restart`, `logs`, `ps`, `pull`, `config`) run only when Axel asks.
 
 A local container runtime such as OrbStack or Docker Desktop is required. The SearXNG upstream is configured only through `SEARXNG_URL`.
 

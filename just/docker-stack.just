@@ -1,4 +1,5 @@
-# Docker stack recipes. Import this from the root justfile.
+# Docker stack recipes. Lives at just/docker-stack.just.
+# The root justfile loads it with: import 'just/docker-stack.just'
 # Operator recipes. Run them only when Axel has asked for that stack change.
 
 up:
