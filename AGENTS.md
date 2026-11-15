@@ -119,6 +119,13 @@ The `pre-commit` hook runs `scripts/check-secrets.sh --staged` after `just setup
 
 If a secret was committed: rotate it first, tell Axel, and do not rewrite history unless Axel approves the force-push.
 
+## Secrets hygiene
+- Never print secret values in diagnostics, logs, transcripts or chat. To inspect an environment, list names only (`env | cut -d= -f1`), and redact `launchctl print` output before it is shown.
+- Never `cat`, unfiltered-`grep`, or print `.env`, `auth.json`, `secrets.yaml`, `*.bak` or plist environment blocks. To check a key exists, test it: `[ -n "$X" ] && echo set`.
+- Give jobs only the keys they need, at start time, from Keychain or a chmod 600 file outside the repo. Local-only jobs start with an empty environment (`env -i`).
+- If a value is printed anyway: stop, don't repeat it, and report the variable name and where it appeared to Sven (security). Treat the key as exposed. Rotation is Axel's decision.
+- Never commit secrets, `.env` files, session exports or `.bak` files; gitleaks CI enforces this.
+
 ## Handoff
 
 Before you stop, write what you did, what is next, and the open questions.
