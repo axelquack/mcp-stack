@@ -10,6 +10,14 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-16 — Pin the gitleaks workflow actions
+
+### Security
+
+- `.github/workflows/gitleaks.yml` now pins `actions/checkout` to the commit for v6.1.0 and `gitleaks/gitleaks-action` to the commit for v3.0.0, with version comments. The existing `permissions` block is unchanged.
+
+**Why:** Pin Actions so a moved tag cannot change what the gitleaks check runs.
+
 ## 2026-11-15 — Secrets hygiene
 
 ### Added
