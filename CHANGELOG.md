@@ -10,6 +10,15 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-19 — Bump Nginx to 1.31.9-alpine
+
+### Security
+
+- Nginx is now `nginx:1.31.9-alpine@sha256:90b6bd2aec278b16b98221d64deb1d6d35d164567f507ab0716e6053878315aa`. The digest is the multi-arch index from the registry. Context7 and SearXNG pins were unchanged.
+- `README.md` and `docs/proxy.md` name the new pin.
+
+**Why:** nginx 1.31.9 fixes nginx2root CVEs (CVE-2026-123007 and others). Requested by Sven (security). Nothing was redeployed.
+
 ## 2026-11-16 — Pin the gitleaks workflow actions
 
 ### Security
