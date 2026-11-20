@@ -10,6 +10,21 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-20 — Work order: redeploy Nginx 1.31.9-alpine (UPD-2026-11-20-001)
+
+### Security
+
+- Status: **waiting on Axel's go**. Nothing was redeployed. This is a work order only.
+- The 2026-11-19 pin `nginx:1.31.9-alpine@sha256:90b6bd2aec278b16b98221d64deb1d6d35d164567f507ab0716e6053878315aa` is already on `main` and was never started. A 2026-11-20 registry check found the current Hub index `sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7`. Both indexes resolve to the same linux/amd64 and linux/arm64 images (arm64 `sha256:d9c353d322c3c8bf7247f2c432e5dedc82792bd6c361589cf6b4b9aef5eae29c`). On apply, prefer the current Hub index so the tag and digest stay aligned. Rollback remains `nginx:1.31.8-alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72`.
+- Live pre-check (2026-11-20, morning): the compose project has no running or stopped containers, and the checkout has no `.env`. `nginx -T` could not be run against a live proxy. The committed `nginx.conf.template` is HTTP/1.1 only (`listen ${PROXY_INTERNAL_PORT}`, `proxy_http_version 1.1`, no `http2`, `ssl`, `resolver`, `alias`, `stream`, `mail`, or `proxy_protocol`). The ten CVE preconditions in that template still look unreachable. Confirm with live `nginx -T` if a proxy is started later.
+- Apply, after go only:
+  - If the stack is still down, do not start it just to patch. Keep the pin for the next start, or start the stack only if Axel says to (that is more than a proxy-only recreate, and needs a local `.env` built from `.env.example`).
+  - If the stack is running, recreate only `proxy`: `docker compose pull proxy` then `docker compose up -d --no-deps --pull never --force-recreate proxy`. Do not compose-up the rest of the stack. Do not touch Collabora.
+- After a recreate: `nginx -v` is 1.31.9; smoke `/context7/` and `/searxng/` (including `/mcp`). 1.31.9 rejects header lines without a colon and chunked bodies with too much framing overhead.
+- Rollback: restore the 1.31.8-alpine pin above and recreate only `proxy`. That re-exposes the 18 Nov batch.
+
+**Why:** Official nginx 1.31.9 security batch (including CVE-2026-123007 and CVE-2026-123633). The pin is on `main` but was never redeployed. Waiting on Axel's go.
+
 ## 2026-11-19 — Bump Nginx to 1.31.9-alpine
 
 ### Security
