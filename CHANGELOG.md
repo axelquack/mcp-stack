@@ -10,6 +10,15 @@ Newest first. Dates are Europe/Berlin, `YYYY-MM-DD`.
 
 Use one heading per change: `## YYYY-MM-DD — title`. Under it, keep only the subsections that have items. End with a Why line.
 
+## 2026-11-23 — Refresh the Nginx 1.31.9 index
+
+### Changed
+
+- Nginx is now `nginx:1.31.9-alpine@sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7`. Tag `1.31.9-alpine` still matches that release. The previous index `sha256:90b6bd2aec278b16b98221d64deb1d6d35d164567f507ab0716e6053878315aa` is the same platform images except a riscv64 manifest that only the new index lists. Context7 and SearXNG pins were unchanged.
+- The image was pulled. The compose project had no containers and no local env file, so the proxy was not started.
+
+**Why:** Axel asked to upgrade the proxy to nginx 1.31.9-alpine. The registry index for that tag had moved since the 2026-11-19 pin.
+
 ## 2026-11-19 — Bump Nginx to 1.31.9-alpine
 
 ### Security
